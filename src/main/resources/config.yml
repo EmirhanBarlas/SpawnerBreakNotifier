@@ -1,2 +1,10 @@
-# Config FILE
-webhookUrl: "https://discord.com/api/webhooks/your_webhook_url_here"
+# Config dosyası
+webhookUrl: "WEBHOOK_URL"
+blockMessages:
+  SPAWNER:
+    message: "**SPAWNER KIRILDI!** \nOyuncu: {player}, \nKoordinatlar: X: {x}, Y: {y}, Z: {z}"
+    color: ffff00 # 0xFF0000 hexadecimal renk değer
+  ANCIENT_DEBRIS:
+    message: "**ANTİK KALINTI KIRILDI!** \nOyuncu: {player}, \nKoordinatlar: X: {x}, Y: {y}, Z: {z}"
+    color: 9b30ff # 0x00FF00 hexadecimal renk değeri
+  #İSTEDİĞİNİZ BLOĞU BU KISMA EKLEYEBİLİRSİNİZ.
