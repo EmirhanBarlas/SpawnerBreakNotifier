@@ -1,2 +1,10 @@
-# Config FILE
+# Config dosyası
 webhookUrl: "https://discord.com/api/webhooks/your_webhook_url_here"
+blockMessages:
+  SPAWNER:
+    message: "SPAWNER KIRILDI! Oyuncu: {player}, Koordinatlar: X: {x}, Y: {y}, Z: {z}"
+    color: 16711680 # 0xFF0000 hexadecimal renk değeri (örnekte kırmızı renk)
+  ANCIENT_DEBRIS:
+    message: "ANTİK KALINTI KIRILDI! Oyuncu: {player}, Koordinatlar: X: {x}, Y: {y}, Z: {z}"
+    color: 65280 # 0x00FF00 hexadecimal renk değeri (örnekte yeşil renk)
+# Buraya başka blokların mesajlarını da ekleyebilirsiniz
