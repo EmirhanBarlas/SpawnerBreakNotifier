@@ -15,14 +15,11 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 
 public class SpawnerBreakNotifier extends JavaPlugin implements Listener {
 
     private WebhookClient client;
     private String webhookUrl;
-    private Map<Material, BlockMessageInfo> blockMessages = new HashMap<>();
 
     @Override
     public void onEnable() {
@@ -43,35 +40,28 @@ public class SpawnerBreakNotifier extends JavaPlugin implements Listener {
     public void onBlockBreak(BlockBreakEvent event) {
         Player player = event.getPlayer();
         Block block = event.getBlock();
-        Material blockType = block.getType();
-        if (blockMessages.containsKey(blockType)) {
+        if (block.getType() == Material.SPAWNER) {
             String playerName = player.getName();
             int x = block.getX();
             int y = block.getY();
             int z = block.getZ();
 
-            sendDiscordMessage(playerName, x, y, z, blockType);
+            sendDiscordMessage(playerName, x, y, z);
         }
     }
 
-    private void sendDiscordMessage(String playerName, int x, int y, int z, Material blockType) {
+    private void sendDiscordMessage(String playerName, int x, int y, int z) {
         if (webhookUrl == null || webhookUrl.isEmpty()) {
-            getLogger().warning("Discord Webhook URL is not set. Please set the webhook URL in the config.yml file.");
+            getLogger().warning("Discord Webhook URL is not set. Please set the webhook URL in the plugin.");
             return;
         }
         if (client == null) {
             client = new WebhookClientBuilder(webhookUrl).build();
         }
-        BlockMessageInfo messageInfo = blockMessages.get(blockType);
-        String message = messageInfo.getMessage()
-                .replace("{player}", playerName)
-                .replace("{x}", String.valueOf(x))
-                .replace("{y}", String.valueOf(y))
-                .replace("{z}", String.valueOf(z));
 
         WebhookEmbedBuilder embed = new WebhookEmbedBuilder()
-                .setDescription(message)
-                .setColor(messageInfo.getColor());
+                .setDescription(("**SPAWNER KIRDI**" + "\nOyuncu: " + playerName + "\nKoordinatlar: X: " + x + ", Y: " + y + ", Z: " + z))
+                .setColor(0xFF0000);
 
         client.send(new WebhookMessageBuilder().addEmbeds(embed.build()).build());
     }
@@ -81,31 +71,6 @@ public class SpawnerBreakNotifier extends JavaPlugin implements Listener {
         webhookUrl = config.getString("webhookUrl");
         if (webhookUrl == null || webhookUrl.isEmpty()) {
             getLogger().warning("Discord Webhook URL is not set. Please set the webhook URL in the config.yml file.");
-        }
-        blockMessages.clear();
-        for (String blockType : config.getConfigurationSection("blockMessages").getKeys(false)) {
-            Material material = Material.matchMaterial(blockType);
-            String message = config.getString("blockMessages." + blockType + ".message");
-            int color = config.getInt("blockMessages." + blockType + ".color", 0xFF0000);
-            blockMessages.put(material, new BlockMessageInfo(message, color));
-        }
-    }
-
-    private static class BlockMessageInfo {
-        private final String message;
-        private final int color;
-
-        public BlockMessageInfo(String message, int color) {
-            this.message = message;
-            this.color = color;
-        }
-
-        public String getMessage() {
-            return message;
-        }
-
-        public int getColor() {
-            return color;
         }
     }
 }
