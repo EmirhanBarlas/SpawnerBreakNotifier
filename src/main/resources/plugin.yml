@@ -1,0 +1,6 @@
+name: SpawnerBreakNotifier
+version: 1.0
+main: org.splendid.spawnerbreaknotifier.SpawnerBreakNotifier
+description: A Bukkit plugin to notify when a spawner is broken on the server.
+author: _Barlas_
+api-version: 1.16
