@@ -1,2 +1,6 @@
-# Config FILE
+# Config dosyası
 webhookUrl: "https://discord.com/api/webhooks/your_webhook_url_here"
+blockMessages:
+  SPAWNER: "**SPAWNER KIRILDI**! \nOyuncu: {player}, \nKoordinatlar: X: {x}, Y: {y}, Z: {z}"
+  ANCIENT_DEBRIS: "**ANTİK KALINTI KIRILDI**! \nOyuncu: {player}, \nKoordinatlar: X: {x}, Y: {y}, Z: {z}"
+# Buraya başka blokların mesajlarını da ekleyebilirsiniz
