@@ -1,10 +1,17 @@
 # Config dosyası
 webhookUrl: "https://discord.com/api/webhooks/your_webhook_url_here"
+worlds:
+  - world
+  - world_nether
+  - world_the_end
 blockMessages:
   SPAWNER:
-    message: "SPAWNER KIRILDI! Oyuncu: {player}, Koordinatlar: X: {x}, Y: {y}, Z: {z}"
-    color: 16711680 # 0xFF0000 hexadecimal renk değeri (örnekte kırmızı renk)
+    message: "**SPAWNER KIRILDI!** \nOyuncu: {player}, \nKoordinatlar: X: {x}, Y: {y}, Z: {z}"
+    color: 7185242 #colors for https://www.mathsisfun.com/hexadecimal-decimal-colors.html
   ANCIENT_DEBRIS:
-    message: "ANTİK KALINTI KIRILDI! Oyuncu: {player}, Koordinatlar: X: {x}, Y: {y}, Z: {z}"
-    color: 65280 # 0x00FF00 hexadecimal renk değeri (örnekte yeşil renk)
-# Buraya başka blokların mesajlarını da ekleyebilirsiniz
+    message: "**ANTİK KALINTI KIRILDI!** \nOyuncu: {player}, \nKoordinatlar: X: {x}, Y: {y}, Z: {z}"
+    color: 7185242 #colors for https://www.mathsisfun.com/hexadecimal-decimal-colors.html
+  DIAMOND_ORE:
+    message: "**BREAK DIAMOND ORE!** \nPLAYER NAME: {player}, \nCORDI: X: {x}, Y: {y}, Z: {z}"
+    color: 7185242
+# add new block

@@ -13,6 +13,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import java.util.List;
 
 import java.io.File;
 import java.util.HashMap;
@@ -44,7 +45,9 @@ public class SpawnerBreakNotifier extends JavaPlugin implements Listener {
         Player player = event.getPlayer();
         Block block = event.getBlock();
         Material blockType = block.getType();
-        if (blockMessages.containsKey(blockType)) {
+        String worldName = block.getWorld().getName();
+        List<String> allowedWorlds = getConfig().getStringList("worlds");
+        if (allowedWorlds.contains(worldName) && blockMessages.containsKey(blockType)) {
             String playerName = player.getName();
             int x = block.getX();
             int y = block.getY();
@@ -87,7 +90,7 @@ public class SpawnerBreakNotifier extends JavaPlugin implements Listener {
         for (String blockType : config.getConfigurationSection("blockMessages").getKeys(false)) {
             Material material = Material.matchMaterial(blockType);
             String message = config.getString("blockMessages." + blockType + ".message");
-            int color = config.getInt("blockMessages." + blockType + ".color", 0xFF0000);
+            int color = config.getInt("blockMessages." + blockType + ".color");
             blockMessages.put(material, new BlockMessageInfo(message, color));
         }
     }
