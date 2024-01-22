@@ -42,18 +42,20 @@ public class SpawnerBreakNotifier extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
+        World world = event.getBlock().getWorld();
         Player player = event.getPlayer();
         Block block = event.getBlock();
         Material blockType = block.getType();
         String worldName = block.getWorld().getName();
         List<String> allowedWorlds = getConfig().getStringList("worlds");
         if (allowedWorlds.contains(worldName) && blockMessages.containsKey(blockType)) {
+            String world = world.getBlock().getWorld();
             String playerName = player.getName();
             int x = block.getX();
             int y = block.getY();
             int z = block.getZ();
 
-            sendDiscordMessage(playerName, x, y, z, blockType);
+            sendDiscordMessage(playerName, x, y, z, blockType, worldName);
         }
     }
 
@@ -70,7 +72,8 @@ public class SpawnerBreakNotifier extends JavaPlugin implements Listener {
                 .replace("{player}", playerName)
                 .replace("{x}", String.valueOf(x))
                 .replace("{y}", String.valueOf(y))
-                .replace("{z}", String.valueOf(z));
+                .replace("{z}", String.valueOf(z))
+                .replace("world", worldName);
 
         WebhookEmbedBuilder embed = new WebhookEmbedBuilder()
                 .setDescription(message)
