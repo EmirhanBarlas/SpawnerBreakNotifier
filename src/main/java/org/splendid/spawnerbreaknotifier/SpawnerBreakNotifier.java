@@ -93,7 +93,7 @@ public class SpawnerBreakNotifier extends JavaPlugin implements Listener {
         for (String blockType : config.getConfigurationSection("blockMessages").getKeys(false)) {
             Material material = Material.matchMaterial(blockType);
             String message = config.getString("blockMessages." + blockType + ".message");
-            String world  = config.getString("blockMessages." + blockType + ".world");
+            String world  = config.getString("worlds");
             int color = config.getInt("blockMessages." + blockType + ".color");
             blockMessages.put(material, new BlockMessageInfo(message, color, world));
         }
