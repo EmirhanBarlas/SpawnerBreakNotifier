@@ -9,6 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -42,24 +43,24 @@ public class SpawnerBreakNotifier extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
-        World world = event.getBlock().getWorld();
         Player player = event.getPlayer();
         Block block = event.getBlock();
+        World world = event.getPlayer().getWorld();
         Material blockType = block.getType();
         String worldName = block.getWorld().getName();
-        List<String> allowedWorlds = getConfig().getStringList("worlds");
+        List<String> allowedWorlds = getConfig().getStringList("world");
         if (allowedWorlds.contains(worldName) && blockMessages.containsKey(blockType)) {
-            String world = world.getBlock().getWorld();
             String playerName = player.getName();
+            String world1 = world.getName();
             int x = block.getX();
             int y = block.getY();
             int z = block.getZ();
 
-            sendDiscordMessage(playerName, x, y, z, blockType, worldName);
+            sendDiscordMessage(playerName, worldName, x, y, z, blockType);
         }
     }
 
-    private void sendDiscordMessage(String playerName, int x, int y, int z, Material blockType) {
+    private void sendDiscordMessage(String playerName, String worldName, int x, int y, int z, Material blockType) {
         if (webhookUrl == null || webhookUrl.isEmpty()) {
             getLogger().warning("Discord Webhook URL is not set. Please set the webhook URL in the config.yml file.");
             return;
@@ -73,7 +74,7 @@ public class SpawnerBreakNotifier extends JavaPlugin implements Listener {
                 .replace("{x}", String.valueOf(x))
                 .replace("{y}", String.valueOf(y))
                 .replace("{z}", String.valueOf(z))
-                .replace("world", worldName);
+                .replace("{world}", worldName);
 
         WebhookEmbedBuilder embed = new WebhookEmbedBuilder()
                 .setDescription(message)
@@ -83,7 +84,6 @@ public class SpawnerBreakNotifier extends JavaPlugin implements Listener {
     }
 
     private void loadConfig() {
-        // Config dosyasını al
         FileConfiguration config = getConfig();
         webhookUrl = config.getString("webhookUrl");
         if (webhookUrl == null || webhookUrl.isEmpty()) {
@@ -93,8 +93,9 @@ public class SpawnerBreakNotifier extends JavaPlugin implements Listener {
         for (String blockType : config.getConfigurationSection("blockMessages").getKeys(false)) {
             Material material = Material.matchMaterial(blockType);
             String message = config.getString("blockMessages." + blockType + ".message");
+            String world  = config.getString("blockMessages." + blockType + ".world");
             int color = config.getInt("blockMessages." + blockType + ".color");
-            blockMessages.put(material, new BlockMessageInfo(message, color));
+            blockMessages.put(material, new BlockMessageInfo(message, color, world));
         }
     }
 
@@ -102,9 +103,12 @@ public class SpawnerBreakNotifier extends JavaPlugin implements Listener {
         private final String message;
         private final int color;
 
-        public BlockMessageInfo(String message, int color) {
+        private  final String world;
+
+        public BlockMessageInfo(String message, int color,  String world) {
             this.message = message;
             this.color = color;
+            this.world = world;
         }
 
         public String getMessage() {
