@@ -1,5 +1,5 @@
 # Config dosyası
-webhookUrl: "https://discord.com/api/webhooks/your_webhook_url_here"
+webhookUrl: "WEBHOOK_URL_HERE"
 worlds:
   - world
   - world_nether
