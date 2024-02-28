@@ -1,5 +1,11 @@
 # Config dosyası
 webhookUrl: "WEBHOOK_URL_HERE"
+mysql:
+  host: "localhost"
+  port: 3306
+  database: "yourdatabase"
+  username: "username"
+  password: "password"
 worlds:
   - world
   - world_nether
