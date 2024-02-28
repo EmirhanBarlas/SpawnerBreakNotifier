@@ -15,31 +15,24 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import java.util.List;
-
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
 public class SpawnerBreakNotifier extends JavaPlugin implements Listener {
-
+    private String mysqlHost;
+    private int mysqlPort;
+    private String mysqlDatabase;
+    private String mysqlUsername;
+    private String mysqlPassword;
+    private Connection connection;
+    private Map<Material, BlockMessageInfo> blockMessages = new HashMap<>();
     private WebhookClient client;
     private String webhookUrl;
-    private Map<Material, BlockMessageInfo> blockMessages = new HashMap<>();
-
-    @Override
-    public void onEnable() {
-        saveDefaultConfig();
-        loadConfig();
-
-        getServer().getPluginManager().registerEvents(this, this);
-    }
-
-    @Override
-    public void onDisable() {
-        if (client != null) {
-            client.close();
-        }
-    }
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
@@ -57,9 +50,43 @@ public class SpawnerBreakNotifier extends JavaPlugin implements Listener {
             int z = block.getZ();
 
             sendDiscordMessage(playerName, worldName, x, y, z, blockType);
+            player.sendMessage(blockMessages.get(blockType).getMessage().replace("{player}", playerName).replace("{x}", String.valueOf(x)).replace("{y}", String.valueOf(y)).replace("{z}", String.valueOf(z)));
         }
     }
 
+    @Override
+    public void onEnable() {
+        saveDefaultConfig();
+        loadConfig();
+
+        // Establish MySQL connection, if it doesn't exist
+        FileConfiguration config = getConfig();
+        mysqlHost = config.getString("mysql.host");
+        mysqlPort = config.getInt("mysql.port");
+        mysqlDatabase = config.getString("mysql.database");
+        mysqlUsername = config.getString("mysql.username");
+        mysqlPassword = config.getString("mysql.password");
+
+        // Establish MySQL connection
+        try {
+            connection = DriverManager.getConnection("jdbc:mysql://" + mysqlHost + ":" + mysqlPort + "/" + mysqlDatabase, mysqlUsername, mysqlPassword);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    @Override
+    public void onDisable() {
+        if (client != null) {
+            client.close();
+        }
+        try {
+            if (connection != null) {
+                connection.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
     private void sendDiscordMessage(String playerName, String worldName, int x, int y, int z, Material blockType) {
         if (webhookUrl == null || webhookUrl.isEmpty()) {
             getLogger().warning("Discord Webhook URL is not set. Please set the webhook URL in the config.yml file.");
@@ -81,6 +108,20 @@ public class SpawnerBreakNotifier extends JavaPlugin implements Listener {
                 .setColor(messageInfo.getColor());
 
         client.send(new WebhookMessageBuilder().addEmbeds(embed.build()).build());
+
+        try {
+            String insertSql = "INSERT INTO block_break_events (player_name, world_name, x, y, z, block_type) VALUES (?, ?, ?, ?, ?, ?)";
+            PreparedStatement preparedStatement = connection.prepareStatement(insertSql);
+            preparedStatement.setString(1, playerName);
+            preparedStatement.setString(2, worldName);
+            preparedStatement.setInt(3, x);
+            preparedStatement.setInt(4, y);
+            preparedStatement.setInt(5, z);
+            preparedStatement.setString(6, blockType.name());
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     private void loadConfig() {
@@ -110,6 +151,7 @@ public class SpawnerBreakNotifier extends JavaPlugin implements Listener {
             this.color = color;
             this.world = world;
         }
+
 
         public String getMessage() {
             return message;

@@ -1,5 +1,11 @@
-# Config dosyası
-webhookUrl: "WEBHOOK_URL_HERE"
+# Config File
+webhookUrl: "DISCORD_WEBHOOK_URL_HERE"
+mysql:
+  host: "YOUR_MYSQL_HOST_ADDRESS"
+  port: 3306
+  database: "DATABASE_NAME"
+  username: "DATABASE_USERNAME"
+  password: "DATABASE_PASSWORD"
 worlds:
   - world
   - world_nether
@@ -14,4 +20,18 @@ blockMessages:
   DIAMOND_ORE:
     message: "**BREAK DIAMOND ORE!** \nPLAYER NAME: {player}, \nCORDI: X: {x}, Y: {y}, Z: {z}"
     color: 7185242
+  GOLD_ORE:
+    message: "**BREAK GOLD ORE!** \nPLAYER NAME: {player}, \nCORDI: X: {x}, Y: {y}, Z: {z}"
+    color: 7185242
+  IRON_ORE:
+    message: "**BREAK IRON ORE!** \nPLAYER NAME: {player}, \nCORDI: X: {x}, Y: {y}, Z: {z}"
+    color: 7185242
+  REDSTONE_ORE:
+    message: "**BREAK REDSTONE ORE!** \nPLAYER NAME: {player}, \nCORDI: X: {x}, Y: {y}, Z: {z}"
+    color: 7185242
+  EMERALD_ORE:
+    message: "**BREAK EMERALD ORE!** \nPLAYER NAME: {player}, \nCORDI: X: {x}, Y: {y}, Z: {z}"
+    color: 7185242
+
+# If there is a block that you do not want to send the message to, you can delete it from this section.
 # add new block
